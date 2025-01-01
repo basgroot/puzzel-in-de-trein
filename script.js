@@ -3,11 +3,11 @@
 
     function replaceSpecialChars(text) {
         let result = text.trim().toLowerCase().replace(/ /g, "");
-        result = result.replace(/äàáâ/g, "a");
-        result = result.replace(/ëèéê/g, "e");
-        result = result.replace(/ïìíî/g, "i");
-        result = result.replace(/üùúû/g, "u");
-        result = result.replace(/öòóô/g, "o");
+        result = result.replace(/[äàáâ]/g, "a");
+        result = result.replace(/[ëèéê]/g, "e");
+        result = result.replace(/[ïìíî]/g, "i");
+        result = result.replace(/[üùúû]/g, "u");
+        result = result.replace(/[öòóô]/g, "o");
         result = result.replace(/-/g, "");
         result = result.replace(/y/g, "ij");
         return result;
@@ -63,6 +63,8 @@
         inputElm.addEventListener("input", filterStations);
         inputElm.addEventListener("keypress", filterStations);
         filterStations();
+        // Select all text in the input field and focus that
+        inputElm.select();
         inputElm.focus();
     }
 
