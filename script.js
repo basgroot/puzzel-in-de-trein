@@ -17,11 +17,19 @@
         const stations = [];
         originalList.forEach(function (line) {
             stations.push({
-                "match": true,
+                "match": true,  // Be positive
                 "originalName": line.trim(),
+                "withoutSpaces": replaceSpecialChars(line).replace(/[-']/g, ""),
                 "search": replaceSpecialChars(line)
             });
         });
+
+        function sortByWordLength(a, b) {
+            if (input.length === 0 || a.withoutSpaces.length === b.withoutSpaces.length) {
+                return a.originalName.localeCompare(b.originalName);
+            }
+            return (input.length - b.withoutSpaces.length) - (input.length - a.withoutSpaces.length);
+        }
 
         const input = replaceSpecialChars(document.getElementById("idInput").value);
 
@@ -38,6 +46,8 @@
                 }
             });
         });
+        // Sort by length, to get the words with matching length on top (Long Hee)
+        stations.sort(sortByWordLength);
         let output = "";
         stations.forEach(function (station) {
             if (station.match) {
@@ -49,9 +59,11 @@
 
     function initialize() {
         // Create the oninput handler for the input
-        document.getElementById("idInput").addEventListener("input", filterStations);
-        document.getElementById("idInput").addEventListener("keypress", filterStations);
+        const inputElm = document.getElementById("idInput");
+        inputElm.addEventListener("input", filterStations);
+        inputElm.addEventListener("keypress", filterStations);
         filterStations();
+        inputElm.focus();
     }
 
     initialize();
