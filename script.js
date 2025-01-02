@@ -1,14 +1,18 @@
 (function () {
-    const originalList = document.getElementById("idOutput").value.split("\n").sort();
+    const originalList = document.getElementById("idStations").value.split("\n").sort();
 
-    function replaceSpecialChars(text) {
-        let result = text.trim().toLowerCase().replace(/ /g, "");
+    function replaceDiacritics(text) {
+        let result = text.toLowerCase();
         result = result.replace(/[äàáâ]/g, "a");
         result = result.replace(/[ëèéê]/g, "e");
         result = result.replace(/[ïìíî]/g, "i");
         result = result.replace(/[üùúû]/g, "u");
         result = result.replace(/[öòóô]/g, "o");
-        result = result.replace(/-/g, "");
+        return result;
+    }
+
+    function replaceSpecialChars(text) {
+        let result = text.toLowerCase().replace(/[- ']/g, "");
         result = result.replace(/y/g, "ij");
         return result;
     }
@@ -19,8 +23,8 @@
             stations.push({
                 "match": true,  // Be positive
                 "originalName": line.trim(),
-                "withoutSpaces": replaceSpecialChars(line).replace(/[-']/g, ""),
-                "search": replaceSpecialChars(line)
+                "withoutSpaces": replaceDiacritics(replaceSpecialChars(line)),
+                "search": replaceDiacritics(replaceSpecialChars(line))
             });
         });
 
@@ -31,7 +35,27 @@
             return (input.length - b.withoutSpaces.length) - (input.length - a.withoutSpaces.length);
         }
 
-        const input = replaceSpecialChars(document.getElementById("idInput").value);
+        function highlightDifferences(stationToAdd) {
+            // If there is not an exact station match, make the missing characters red
+            const stationToAddEncoded = replaceDiacritics(stationToAdd);
+            let remainingInput = replaceDiacritics(document.getElementById("idInput").value);
+            let result = "";
+            let index = 0;
+            let pos;
+            for (const character of stationToAddEncoded) {
+                pos = remainingInput.indexOf(character);
+                if (pos === -1) {
+                    result += "<span class='missing'>" + stationToAdd[index] + "</span>";
+                } else {
+                    result += stationToAdd[index];
+                    remainingInput = remainingInput.slice(0, pos) + remainingInput.slice(pos + 1, remainingInput.length)
+                }
+                index += 1;
+            }
+            return result;
+        }
+
+        const input = replaceDiacritics(replaceSpecialChars(document.getElementById("idInput").value));
 
         input.split("").forEach(function (char) {
             stations.forEach(function (station) {
@@ -51,10 +75,16 @@
         let output = "";
         stations.forEach(function (station) {
             if (station.match) {
-                output += station.originalName + "\n";
+                if (output.length > 0) {
+                    output += "<br>";
+                }
+                output += highlightDifferences(station.originalName);
             }
         });
-        document.getElementById("idOutput").value = output.trim();
+        if (output.length === 0) {
+            output = "Geen station met deze letters gevonden. Is de naam goet geschreven?";
+        }
+        document.getElementById("idOutput").innerHTML = output;
     }
 
     function initialize() {
