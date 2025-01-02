@@ -30,6 +30,5 @@ input[type=text] {
 }
 
 .missing {
-    text-decoration: line-through;
     color: red;
 }
