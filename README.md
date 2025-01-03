@@ -7,4 +7,5 @@ Voorbeelden:
 - Baanlicht Taureem
 - Pennie Vuwen
 
-Probeer [deze website](https://basgroot.github.io/puzzel-in-de-trein/) mocht dat niet zo zijn. Of verzin nieuwe NS-anagrammen.
+Het spoor bijster?
+Het antwoord vind je op [deze website](https://basgroot.github.io/puzzel-in-de-trein/). Of gebruik de site om nieuwe (betere) NS-anagrammen te verzinnen.
