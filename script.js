@@ -12,7 +12,7 @@
     }
 
     function replaceSpecialChars(text) {
-        let result = text.toLowerCase().replace(/[- ']/g, "");
+        let result = text.toLowerCase().replace(/[- '.,()!]/g, "");
         result = result.replace(/y/g, "ij");
         return result;
     }
@@ -82,7 +82,7 @@
             }
         });
         if (output.length === 0) {
-            output = "Geen station met deze letters gevonden. Is de naam goet geschreven?";
+            output = "Geen station met deze letters gevonden.<br>Is de naam goe<span class='missing'>t</span> geschreven?";
         }
         document.getElementById("idOutput").innerHTML = output;
     }
