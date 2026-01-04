@@ -1,7 +1,10 @@
 # NS-treinpuzzel
 > Oeps, de letters zijn gehusseld. Raad jij de juiste stationsnaam?
 
+<img src="preview.png" alt="Voorbeeld van de puzzel" width="100"/>
+
 Voorbeelden:
+- Adel Bar Tramtok
 - Armbandatelier Jammers
 - Arme Hal
 - Baanlicht Taureem
