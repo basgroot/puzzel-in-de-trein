@@ -1,13 +1,15 @@
 (function () {
-    const originalList = document.getElementById("idStations").value.split("\n").sort();
+    const originalList = document.getElementById("idStations").value.trim().split("\n").sort();
 
     function replaceDiacritics(text) {
         let result = text.toLowerCase();
         result = result.replace(/[äàáâ]/g, "a");
+        result = result.replace(/[ç]/g, "c");
         result = result.replace(/[ëèéê]/g, "e");
         result = result.replace(/[ïìíî]/g, "i");
-        result = result.replace(/[üùúû]/g, "u");
+        result = result.replace(/[ñ]/g, "n");
         result = result.replace(/[öòóô]/g, "o");
+        result = result.replace(/[üùúû]/g, "u");
         return result;
     }
 
@@ -48,7 +50,7 @@
                     result += "<span class='missing'>" + stationToAdd[index] + "</span>";
                 } else {
                     result += stationToAdd[index];
-                    remainingInput = remainingInput.slice(0, pos) + remainingInput.slice(pos + 1, remainingInput.length)
+                    remainingInput = remainingInput.slice(0, pos) + remainingInput.slice(pos + 1)
                 }
                 index += 1;
             }
@@ -91,7 +93,6 @@
         // Create the oninput handler for the input
         const inputElm = document.getElementById("idInput");
         inputElm.addEventListener("input", filterStations);
-        inputElm.addEventListener("keypress", filterStations);
         filterStations();
         // Select all text in the input field and focus that
         inputElm.select();
