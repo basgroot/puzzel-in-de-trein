@@ -1,5 +1,6 @@
 (function () {
     const originalList = document.getElementById("idStations").value.trim().split("\n").sort();
+    const summaryCache = {};
 
     function replaceDiacritics(text) {
         let result = text.toLowerCase();
@@ -74,19 +75,54 @@
         });
         // Sort by length, to get the words with matching length on top (Long Hee)
         stations.sort(sortByWordLength);
+        function stationLinks(name) {
+            const wikiUrl = "https://nl.wikipedia.org/wiki/Station_" + encodeURIComponent(name.replace(/ /g, "_"));
+            return " <span class='station-links'>"
+                + "<a href='" + wikiUrl + "' target='_blank' rel='noopener' title='Wikipedia'>Wiki</a>"
+                + "</span>";
+        }
+
+        function loadSummary(name, elementId) {
+            if (summaryCache[name] !== undefined) {
+                document.getElementById(elementId).textContent = summaryCache[name];
+                return;
+            }
+            const apiUrl = "https://nl.wikipedia.org/api/rest_v1/page/summary/Station_" + encodeURIComponent(name.replace(/ /g, "_"));
+            fetch(apiUrl)
+                .then(function (response) { return response.json(); })
+                .then(function (data) {
+                    const summary = data.extract || "";
+                    summaryCache[name] = summary;
+                    const el = document.getElementById(elementId);
+                    if (el) { el.textContent = summary; }
+                })
+                .catch(function () {
+                    summaryCache[name] = "";
+                });
+        }
+
         let output = "";
+        const toLoad = [];
         stations.forEach(function (station) {
             if (station.match) {
                 if (output.length > 0) {
                     output += "<br>";
                 }
-                output += highlightDifferences(station.originalName);
+                const summaryId = "summary_" + encodeURIComponent(station.originalName);
+                const cachedSummary = summaryCache[station.originalName];
+                const summaryText = cachedSummary !== undefined ? cachedSummary : "";
+                output += "<span class='station-name'>" + highlightDifferences(station.originalName) + stationLinks(station.originalName) + "</span>"
+                    + "<span class='station-summary' id='" + summaryId + "'>" + summaryText + "</span>";
+                if (cachedSummary === undefined) {
+                    toLoad.push({ name: station.originalName, id: summaryId });
+                }
             }
         });
         if (output.length === 0) {
             output = "Geen station met deze letters gevonden.<br>Is de naam goe<span class='missing'>t</span> geschreven?";
         }
         document.getElementById("idOutput").innerHTML = output;
+        toLoad.forEach(function (item) { loadSummary(item.name, item.id); });
     }
 
     function initialize() {
